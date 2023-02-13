@@ -29,7 +29,7 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 		
 		await fs.promises.rename(givenFileName, actualFileName);
 
-		const response = await sendReponsetoSQS(req.file.originalname);
+		const response = await sendReponsetoSQS(actualFileName);
 
 		res.status(200).json(
 			{

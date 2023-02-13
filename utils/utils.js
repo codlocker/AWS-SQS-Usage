@@ -1,5 +1,6 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
+const path = require("path")
 
 AWS.config.update({ region: 'us-east-1'});
 var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
@@ -19,7 +20,7 @@ exports.sendReponsetoSQS = async (filePath) => {
         MessageAttributes: {
             "FileName": {
                DataType: "String",
-               StringValue: filePath
+               StringValue: path.basename(filePath)
             },
         },
         MessageBody: data_base_64_encoded,
