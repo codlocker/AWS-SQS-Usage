@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const port = 3000;
 
 // Load env vars
+console.log(process.env.NODE_ENV);
+
 if(process.env.NODE_ENV === 'development') {
 	dotenv.config({path : './config/config.env'});
 } else {
