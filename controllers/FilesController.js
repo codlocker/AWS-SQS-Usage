@@ -19,12 +19,24 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.uploadFile = asyncHandler(async (req, res, next) => {
+exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 	if (req.file) console.log(req.file);
 	var fs = require('fs');
 	console.log(fileUploadPath + req.file.filename);
+	
 	fs.rename(fileUploadPath + req.file.filename, fileUploadPath + req.file.originalname, function (err) {
-		if (err) console.log('ERROR: ' + err);
+		if (err) {
+			res.status(500).json(
+				{
+					"message": "Upload failed. Retry!!",
+					"uploadStatus": false
+				});
+		}
 	});
-	res.end(req.file.originalname + ' uploaded!');
+
+	res.status(200).json(
+		{
+			"uploadFilePath" : fileUploadPath + req.file.originalname,
+			"uploadStatus": true
+		});
 });

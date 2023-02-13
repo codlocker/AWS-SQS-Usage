@@ -4,8 +4,7 @@ const express = require("express");
 const port = 3000;
 
 // Routes
-const files = require('./routes/files');
-const sqs = require('./routes/sqs');
+const routes = require('./routes/router');
 
 const app = express();
 app.use(express.static('public'));
@@ -14,8 +13,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // Mount routers
-app.use('/api/v1/files', files);
-app.use('/api/v1/sqs', sqs);
+app.use('/api/v1/', routes);
 
 
 const hostname = '0.0.0.0';
