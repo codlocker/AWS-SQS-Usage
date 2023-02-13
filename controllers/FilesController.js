@@ -1,7 +1,7 @@
 const asyncHandler =  require('../middleware/async');
 const multer = require("multer");
 const fs = require("fs");
-const fileUploadPath = __dirname + '/../upload_images/';
+const fileUploadPath = __dirname + process.env.IMAGE_UPLOAD_PATH;
 const ErrorResponse = require("../middleware/errorResponse");
 const {sendReponsetoSQS } = require('../utils/utils');
 

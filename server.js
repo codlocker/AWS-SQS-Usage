@@ -1,7 +1,15 @@
 // Write a message to the console.
 const express = require("express");
+const dotenv = require('dotenv');
 
 const port = 3000;
+
+// Load env vars
+if(process.env.NODE_ENV === 'development') {
+	dotenv.config({path : './config/config.env'});
+} else {
+	dotenv.config({path : './config/config-prod.env'});
+}
 
 // Routes
 const routes = require('./routes/router');

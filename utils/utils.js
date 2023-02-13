@@ -1,9 +1,9 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
-const path = require("path")
+const path = require("path");
 
-AWS.config.update({ region: 'us-east-1'});
-var sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
+AWS.config.update({ region: process.env.AWS_REGION });
+var sqs = new AWS.SQS({ apiVersion: process.env.SQS_API_VERSION });
 
 let base64_encode = (file) => {
     // read binary data
@@ -14,7 +14,6 @@ let base64_encode = (file) => {
 
 exports.sendReponsetoSQS = async (filePath) => {
     var data_base_64_encoded = base64_encode(filePath);
-
     let params = {
         DelaySeconds: 30,
         MessageAttributes: {
@@ -24,7 +23,7 @@ exports.sendReponsetoSQS = async (filePath) => {
             },
         },
         MessageBody: data_base_64_encoded,
-        QueueUrl: "https://sqs.us-east-1.amazonaws.com/214776426364/sqs1"
+        QueueUrl: process.env.PUSH_SQS_URI
     }
 
     let queueRes = await sqs.sendMessage(params).promise();
@@ -40,7 +39,7 @@ exports.sendReponsetoSQS = async (filePath) => {
 
 exports.receiveResponseFromSQS = async () => {
     var params = {
-        QueueUrl: "https://sqs.us-east-1.amazonaws.com/214776426364/SQS2",
+        QueueUrl: process.env.PULL_SQS_URI,
         AttributeNames: [
             "All"
         ],
