@@ -18,7 +18,6 @@ exports.sendReponsetoSQS = async (filePath) => {
     let baseFileName = path.basename(filePath);
 
     let params = {
-        DelaySeconds: 30,
         MessageAttributes: {
             "FileName": {
                DataType: "String",
