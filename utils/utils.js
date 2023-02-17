@@ -15,16 +15,21 @@ let base64_encode = (file) => {
 exports.sendReponsetoSQS = async (filePath) => {
 
     var data_base_64_encoded = base64_encode(filePath);
+    let baseFileName = path.basename(filePath);
+
     let params = {
         DelaySeconds: 30,
         MessageAttributes: {
             "FileName": {
                DataType: "String",
-               StringValue: path.basename(filePath)
+               StringValue: baseFileName
             },
         },
         MessageBody: data_base_64_encoded,
-        QueueUrl: process.env.PUSH_SQS_URI
+        QueueUrl: process.env.PUSH_SQS_URI,
+        MessageDeduplicationId: baseFileName,
+        MessageGroupId: 'ClassifyImages'
+
     }
 
     let queueRes = await sqs.sendMessage(params).promise();
@@ -46,7 +51,9 @@ exports.receiveResponseFromSQS = async () => {
         AttributeNames: [
             "All"
         ],
-        MaxNumberOfMessages: 10
+        MaxNumberOfMessages: 1,
+        VisibilityTimeout: 15,
+        WaitTimeSeconds: 0
     };
 
     let queueRes = await sqs.receiveMessage(params).promise();
