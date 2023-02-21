@@ -29,7 +29,6 @@ app.use('/api/v1/', routes);
 // Error
 app.use(errorHandler);
 
-
 const hostname = '0.0.0.0';
 const server = app.listen(port, hostname, () => {
 	console.log(`Server running at http://${hostname}:${port}/`);

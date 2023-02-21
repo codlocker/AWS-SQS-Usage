@@ -6,10 +6,10 @@ const { getFiles, uploadFileHandler: uploadFile, upload } = require('../controll
 const { sendReponsetoSQS, receiveResponseAndDeleteFromSQS } = require('../controllers/SQSController.js');
 
 
-router.get('/', getFiles);
-router.post('/', upload.single('myfile'), uploadFile);
+router.get('/files', getFiles);
+router.post('/files', upload.single('myfile'), uploadFile);
 
-router.post('/send', sendReponsetoSQS);
-router.post('/receive', receiveResponseAndDeleteFromSQS);
+router.post('/sqs/send', sendReponsetoSQS);
+router.get('/sqs/receiveAndDelete', receiveResponseAndDeleteFromSQS);
 
 module.exports = router;

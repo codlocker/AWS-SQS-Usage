@@ -42,7 +42,7 @@ exports.sendReponsetoSQS = async (filePath) => {
     return response;
 }
 
-exports.receiveResponseFromSQS = async () => {
+let receiveResponseFromSQS = async () => {
     // console.log(process.env.AWS_DEFAULT_REGION);
 
     var params = {
@@ -65,12 +65,41 @@ exports.receiveResponseFromSQS = async () => {
     return response;
 };
 
-exports.deleteMessageFromSQS = async(messageHandle) => {
+let deleteMessageFromSQS = async(messageHandle) => {
     let params = {
         QueueUrl: process.env.PULL_SQS_URI,
         ReceiptHandle: messageHandle
     };
 
-    let deleteResponse = await sqs.deleteMessage(params).promise();
-    console.log(deleteResponse);
+    await sqs.deleteMessage(params).promise();
+}
+
+exports.receiveAndDeleteFromSQS = async() => {
+    let response = await receiveResponseFromSQS();
+    let messageList = [];
+    if(response.body.Messages !== undefined && response.body.Messages.length > 0) {
+        console.log(`Found ${response.body.Messages.length} messages`);
+        var messages = response.body.Messages;
+
+        messages.forEach(async element => {
+            // console.log(element);
+            messageList.push(element.Body);
+
+            await deleteMessageFromSQS(element.ReceiptHandle);
+        });
+    } else {
+        console.log(`Found 0 messages`);
+        let response = {
+            statusCode: 204,
+        };
+    
+        return response;
+    }
+
+   response = {
+        statusCode: 200,
+        message: messageList,
+    };
+
+    return response;
 }
