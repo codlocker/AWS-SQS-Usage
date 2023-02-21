@@ -50,9 +50,9 @@ let receiveResponseFromSQS = async () => {
         AttributeNames: [
             "All"
         ],
-        MaxNumberOfMessages: 1,
+        MaxNumberOfMessages: 10,
         VisibilityTimeout: 15,
-        WaitTimeSeconds: 0
+        WaitTimeSeconds: 10,
     };
 
     let queueRes = await sqs.receiveMessage(params).promise();
@@ -74,18 +74,21 @@ let deleteMessageFromSQS = async(messageHandle) => {
     await sqs.deleteMessage(params).promise();
 }
 
-exports.receiveAndDeleteFromSQS = async() => {
+exports.receiveAndDeleteFromSQS = async(fileName) => {
+    console.log(fileName);
     let response = await receiveResponseFromSQS();
-    let messageList = [];
+    let message = null;
     if(response.body.Messages !== undefined && response.body.Messages.length > 0) {
         console.log(`Found ${response.body.Messages.length} messages`);
         var messages = response.body.Messages;
 
         messages.forEach(async element => {
-            // console.log(element);
-            messageList.push(element.Body);
-
-            await deleteMessageFromSQS(element.ReceiptHandle);
+            console.log(element);
+            if(element.Body.includes(fileName)) {
+                message = element;
+                await deleteMessageFromSQS(element.ReceiptHandle);
+                return;
+            }
         });
     } else {
         console.log(`Found 0 messages`);
@@ -98,7 +101,7 @@ exports.receiveAndDeleteFromSQS = async() => {
 
    response = {
         statusCode: 200,
-        message: messageList,
+        message: message,
     };
 
     return response;
