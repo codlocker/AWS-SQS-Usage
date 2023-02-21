@@ -26,8 +26,8 @@ exports.sendReponsetoSQS = async (filePath) => {
         },
         MessageBody: data_base_64_encoded,
         QueueUrl: process.env.PUSH_SQS_URI,
-        // MessageDeduplicationId: baseFileName,
-        // MessageGroupId: 'ClassifyImages'
+        MessageDeduplicationId: baseFileName,
+        MessageGroupId: 'ClassifyImages'
 
     }
 
