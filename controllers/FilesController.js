@@ -32,16 +32,16 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 
 		let response = await sendReponsetoSQS(actualFileName);
 
-		let receive_response = await receiveAndDeleteFromSQS();
+		let receive_response = await receiveAndDeleteFromSQS(
+			basename(actualFileName));
 		
 		const messageFileUpload = `File ${basename(actualFileName)} uploaded successfully!!\n`
 
 		// process messages
 		var message = "";
-		if(receive_response.statusCode == 200) {
-			receive_response.message.forEach(async element => {
-				message += element;
-			});
+		console.log(receive_response);
+		if(receive_response.statusCode == 200 && receive_response.message !== null) {
+			message += `Classification result of ${basename(actualFileName)} : ${receive_response.message.Body}\n`;
 		}
 
 		res.status(200).send(messageFileUpload + message);
