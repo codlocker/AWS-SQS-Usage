@@ -1,6 +1,6 @@
 
 const asyncHandler = require("../middleware/async");
-const {receiveResponseFromSQS, sendReponsetoSQS } = require('../utils/utils');
+const {receiveResponseFromSQS, sendReponsetoSQS, deleteMessageFromSQS } = require('../utils/utils');
 const ErrorResponse = require("../middleware/errorResponse");
 const path = require("path");
 
@@ -18,10 +18,26 @@ exports.sendReponsetoSQS = asyncHandler(async (req, res, next) => {
     }
 });
 
-exports.receiveResponseFromSQS = asyncHandler(async (req, res, next) => {
+exports.receiveResponseAndDeleteFromSQS = asyncHandler(async (req, res, next) => {
     try {
         const response = await receiveResponseFromSQS();
-        return res.status(200).json({'message' : response});
+        let messageList = [];
+        if(response.body.Messages !== undefined && response.body.Messages.length > 0) {
+            console.log(`Found ${response.body.Messages.length} messages`);
+            var messages = response.body.Messages;
+
+            messages.forEach(async element => {
+                // console.log(element);
+                messageList.push(element.Body);
+
+                await deleteMessageFromSQS(element.ReceiptHandle);
+            });
+        } else {
+            console.log(`Found 0 messages`);
+            return res.status(204);
+        }
+
+        return res.status(200).json({'message' : messageList});
     } catch(err) {
         return next(
             new ErrorResponse(`Receive Message failed with error ${err}`, 500)

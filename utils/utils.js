@@ -26,8 +26,8 @@ exports.sendReponsetoSQS = async (filePath) => {
         },
         MessageBody: data_base_64_encoded,
         QueueUrl: process.env.PUSH_SQS_URI,
-        MessageDeduplicationId: baseFileName,
-        MessageGroupId: 'ClassifyImages'
+        // MessageDeduplicationId: baseFileName,
+        // MessageGroupId: 'ClassifyImages'
 
     }
 
@@ -43,7 +43,7 @@ exports.sendReponsetoSQS = async (filePath) => {
 }
 
 exports.receiveResponseFromSQS = async () => {
-    console.log(process.env.AWS_DEFAULT_REGION);
+    // console.log(process.env.AWS_DEFAULT_REGION);
 
     var params = {
         QueueUrl: process.env.PULL_SQS_URI,
@@ -64,3 +64,13 @@ exports.receiveResponseFromSQS = async () => {
 
     return response;
 };
+
+exports.deleteMessageFromSQS = async(messageHandle) => {
+    let params = {
+        QueueUrl: process.env.PULL_SQS_URI,
+        ReceiptHandle: messageHandle
+    };
+
+    let deleteResponse = await sqs.deleteMessage(params).promise();
+    console.log(deleteResponse);
+}
