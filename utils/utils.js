@@ -55,6 +55,7 @@ let receiveResponseFromSQS = async () => {
             "All"
         ],
         MaxNumberOfMessages: 10,
+        WaitTimeSeconds: 5
     };
 
     let queueRes = await sqs.receiveMessage(params).promise();
