@@ -24,7 +24,7 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 
 exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 	try {
-		console.log("====Request Begin====");
+		console.log("====Request Begin====\n");
 		// if (req.file) console.log(req.file);
 		var givenFileName = fileUploadPath + req.file.filename;
 		var actualFileName = fileUploadPath + req.file.originalname;
@@ -48,8 +48,8 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 
 
 		console.log(`File ${basename(actualFileName)} uploaded successfully!!\n`);
-
-		console.log("====Request End====");
+		console.log(`${message}\n`);
+		console.log("====Request End====\n");
 
 		res.status(200).send(message);
 
