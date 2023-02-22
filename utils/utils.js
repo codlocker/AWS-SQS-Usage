@@ -54,7 +54,7 @@ let receiveResponseFromSQS = async () => {
         AttributeNames: [
             "All"
         ],
-        MaxNumberOfMessages: 1,
+        MaxNumberOfMessages: 10,
         VisibilityTimeout: 15,
         WaitTimeSeconds: 10,
     };
@@ -93,8 +93,9 @@ let receiveAndDeleteFromSQS = async(fileName) => {
                 message = element;
                 message["processed_fileName"] = processed_fileName;
                 await deleteMessageFromSQS(element.ReceiptHandle);
+                set_of_images_uploaded.delete(processed_fileName);
+                return;
             }
-            return;
         });
     } else {
         console.log(`Found 0 messages`);
@@ -122,7 +123,7 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 exports.retryResponseSQS = async(fileName) => {
     try {
         const loadResponseFromSQS = () => { return polly()
-            .waitAndRetry(2)
+            .waitAndRetry([100, 200, 400, 800, 1600])
             .executeForPromise(async() => {
                 let receive_response = await receiveAndDeleteFromSQS(
                     basename(fileName));
