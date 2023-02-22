@@ -55,8 +55,6 @@ let receiveResponseFromSQS = async () => {
             "All"
         ],
         MaxNumberOfMessages: 10,
-        VisibilityTimeout: 15,
-        WaitTimeSeconds: 10,
     };
 
     let queueRes = await sqs.receiveMessage(params).promise();
@@ -79,7 +77,7 @@ let deleteMessageFromSQS = async(messageHandle) => {
 }
 
 let receiveAndDeleteFromSQS = async(fileName) => {
-    console.log(fileName);
+    // console.log(fileName);
     let response = await receiveResponseFromSQS();
     let message = null;
     if(response.body.Messages !== undefined && response.body.Messages.length > 0) {
