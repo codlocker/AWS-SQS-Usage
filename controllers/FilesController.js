@@ -3,7 +3,7 @@ const multer = require("multer");
 const fs = require("fs");
 const fileUploadPath = __dirname + process.env.IMAGE_UPLOAD_PATH;
 const ErrorResponse = require("../middleware/errorResponse");
-const {sendReponsetoSQS, receiveAndDeleteFromSQS } = require('../utils/utils');
+const {sendReponsetoSQS, retryResponseSQS } = require('../utils/utils');
 const { basename } = require('path');
 
 exports.upload = multer({ dest: fileUploadPath });
@@ -28,21 +28,25 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 		var givenFileName = fileUploadPath + req.file.filename;
 		var actualFileName = fileUploadPath + req.file.originalname;
 		
+		// 1. Upload and rename file
 		await fs.promises.rename(givenFileName, actualFileName);
 
+
+		// 2. Send file data to SQS
 		let response = await sendReponsetoSQS(actualFileName);
-
-		let receive_response = await receiveAndDeleteFromSQS(
-			basename(actualFileName));
+		let message = "";
 		
-		const messageFileUpload = `File ${basename(actualFileName)} uploaded successfully!!\n`
+		// 3. Retry and get response from SQS.
+		const sqsResponse = await retryResponseSQS(basename(actualFileName));
 
-		// process messages
-		var message = "";
-		console.log(receive_response);
-		if(receive_response.statusCode == 200 && receive_response.message !== null) {
-			message += `Classification result of ${basename(actualFileName)} : ${receive_response.message.Body}\n`;
+		if(sqsResponse.statusCode === 204) {
+			message = `Classfication result ${basename(actualFileName)}: not found`
+		} else {
+			message = `Classfication result ${basename(actualFileName)}: ${sqsResponse.message.Body}`
 		}
+
+
+		const messageFileUpload = `File ${basename(actualFileName)} uploaded successfully!!\n`
 
 		res.status(200).send(messageFileUpload + message);
 
