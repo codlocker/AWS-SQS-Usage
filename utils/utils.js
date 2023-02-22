@@ -91,6 +91,7 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 
             if(set_of_images_uploaded.has(fileName)) {
                 message = element;
+                message["processed_fileName"] = fileName;
                 await deleteMessageFromSQS(element.ReceiptHandle);
             }
             return;
