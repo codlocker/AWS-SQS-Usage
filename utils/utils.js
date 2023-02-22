@@ -88,10 +88,10 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 
         messages.forEach(async element => {
             // console.log(element);
-
-            if(set_of_images_uploaded.has(fileName)) {
+            let processed_fileName = element.Body.split(",")[0];
+            if(set_of_images_uploaded.has(processed_fileName)) {
                 message = element;
-                message["processed_fileName"] = fileName;
+                message["processed_fileName"] = processed_fileName;
                 await deleteMessageFromSQS(element.ReceiptHandle);
             }
             return;
