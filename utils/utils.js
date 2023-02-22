@@ -123,7 +123,7 @@ exports.retryResponseSQS = async(fileName) => {
                 let receive_response = await receiveAndDeleteFromSQS(
                     basename(fileName));
                         // process messages
-                console.log(receive_response);
+                // console.log(receive_response);
                 if(receive_response.statusCode == 200) {
                     return receive_response;
                 }
