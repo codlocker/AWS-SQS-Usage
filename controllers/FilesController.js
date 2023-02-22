@@ -24,6 +24,7 @@ exports.getFiles = asyncHandler(async (req, res, next) => {
 
 exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 	try {
+		console.log("====Request Begin====");
 		// if (req.file) console.log(req.file);
 		var givenFileName = fileUploadPath + req.file.filename;
 		var actualFileName = fileUploadPath + req.file.originalname;
@@ -42,13 +43,15 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 		if(sqsResponse.statusCode === 204) {
 			message = `Classfication result ${basename(actualFileName)}: not found`
 		} else {
-			message = `Classfication result ${basename(actualFileName)}: ${sqsResponse.message.Body}`
+			message = `for ${basename(actualFileName)}: ${sqsResponse.message.Body}`
 		}
 
 
-		const messageFileUpload = `File ${basename(actualFileName)} uploaded successfully!!\n`
+		console.log(`File ${basename(actualFileName)} uploaded successfully!!\n`);
 
-		res.status(200).send(messageFileUpload + message);
+		console.log("====Request End====");
+
+		res.status(200).send(message);
 
 	} catch(err) {
 		return next(
