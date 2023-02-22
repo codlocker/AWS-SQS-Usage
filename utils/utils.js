@@ -6,6 +6,7 @@ const { basename } = require('path');
 
 AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
 var sqs = new AWS.SQS({ apiVersion: process.env.SQS_API_VERSION });
+let set_of_images_uploaded = new Set();
 
 let base64_encode = (file) => {
     // read binary data
@@ -39,6 +40,7 @@ exports.sendReponsetoSQS = async (filePath) => {
         body: queueRes,
     };
     
+    set_of_images_uploaded.add(baseFileName);
     // console.log(response);
     
     return response;
@@ -52,7 +54,7 @@ let receiveResponseFromSQS = async () => {
         AttributeNames: [
             "All"
         ],
-        MaxNumberOfMessages: 10,
+        MaxNumberOfMessages: 1,
         VisibilityTimeout: 15,
         WaitTimeSeconds: 10,
     };
@@ -86,11 +88,12 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 
         messages.forEach(async element => {
             // console.log(element);
-            if(element.Body.includes(fileName)) {
+
+            if(set_of_images_uploaded.has(fileName)) {
                 message = element;
                 await deleteMessageFromSQS(element.ReceiptHandle);
-                return;
             }
+            return;
         });
     } else {
         console.log(`Found 0 messages`);
