@@ -93,7 +93,6 @@ let receiveAndDeleteFromSQS = async(fileName) => {
                 message["processed_fileName"] = processed_fileName;
                 await deleteMessageFromSQS(element.ReceiptHandle);
                 set_of_images_uploaded.delete(processed_fileName);
-                return;
             }
         });
     } else {
@@ -122,7 +121,7 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 exports.retryResponseSQS = async(fileName) => {
     try {
         const loadResponseFromSQS = () => { return polly()
-            .waitAndRetry([1000, 2000, 4000, 8000, 16000])
+            .waitAndRetry([60000, 120000, 240000])
             .executeForPromise(async() => {
                 let receive_response = await receiveAndDeleteFromSQS(
                     basename(fileName));
