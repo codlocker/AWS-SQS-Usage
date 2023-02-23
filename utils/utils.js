@@ -121,7 +121,7 @@ let receiveAndDeleteFromSQS = async(fileName) => {
 exports.retryResponseSQS = async(fileName) => {
     try {
         const loadResponseFromSQS = () => { return polly()
-            .waitAndRetry([60000, 120000, 240000])
+            .waitAndRetry([60000, 60000, 60000, 60000, 60000, 60000, 60000])
             .executeForPromise(async() => {
                 let receive_response = await receiveAndDeleteFromSQS(
                     basename(fileName));
