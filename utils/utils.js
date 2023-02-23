@@ -54,7 +54,7 @@ let receiveResponseFromSQS = async () => {
         AttributeNames: [
             "All"
         ],
-        MaxNumberOfMessages: 10,
+        MaxNumberOfMessages: 1,
         WaitTimeSeconds: 5
     };
 
