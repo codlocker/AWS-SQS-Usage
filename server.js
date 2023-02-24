@@ -33,3 +33,6 @@ const hostname = '0.0.0.0';
 const server = app.listen(port, hostname, () => {
 	console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+server.timeout = 600000;
+server.requestTimeout = 600000;
