@@ -43,12 +43,12 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 		if(sqsResponse.statusCode === 204) {
 			message = `Classfication result ${basename(actualFileName)}: not found`
 		} else {
-			message = `for ${basename(sqsResponse.message.processed_fileName)}: ${sqsResponse.message.Body}`.green
+			message = `for ${basename(sqsResponse.message.processed_fileName)}: ${sqsResponse.message.Body}`
 		}
 
 
 		console.log(`File ${basename(actualFileName)} uploaded successfully!!\n`.green);
-		console.log(`${message}\n`);
+		console.log(`${message}\n`.green);
 		console.log("====Request End====\n");
 
 		res.status(200).send(message);

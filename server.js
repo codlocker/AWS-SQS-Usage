@@ -1,7 +1,6 @@
 // Write a message to the console.
 const express = require("express");
 const dotenv = require('dotenv');
-const morgan = require('morgan');
 const colors = require('colors');
 
 const port = 3000;
@@ -24,9 +23,6 @@ app.use(express.static('public'));
 
 // Body parser
 app.use(express.json());
-
-// Mount logger
-app.use(morgan('combined'));
 
 // Mount routers
 app.use('/api/v1/', routes);
