@@ -1,6 +1,7 @@
 // Write a message to the console.
 const express = require("express");
 const dotenv = require('dotenv');
+const colors = require('colors');
 
 const port = 3000;
 
@@ -31,8 +32,9 @@ app.use(errorHandler);
 
 const hostname = '0.0.0.0';
 const server = app.listen(port, hostname, () => {
-	console.log(`Server running at http://${hostname}:${port}/`);
+	console.log(`Server running in ${process.env.NODE_ENV} at http://${hostname}:${port}/`.yellow.bold);
 });
 
+server.setTimeout(600000);
 server.timeout = 600000;
 server.requestTimeout = 600000;
