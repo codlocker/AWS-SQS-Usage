@@ -32,9 +32,13 @@ app.use(errorHandler);
 
 const hostname = '0.0.0.0';
 const server = app.listen(port, hostname, () => {
-	console.log(`Server running in ${process.env.NODE_ENV} at http://${hostname}:${port}/`.yellow.bold);
+	console.log(`Server running in ${process.env.NODE_ENV} at http://${hostname}:${port}/`.blue.bold);
 });
 
-server.setTimeout(600000);
-server.timeout = 600000;
-server.requestTimeout = 600000;
+server.on('connection', function(socket) {
+	console.log("A new connection was made by a client.".blue);
+	socket.setTimeout(500 * 1000); 
+	socket.setKeepAlive = true;
+	server.keepAliveTimeout = app.request.keepAliveTimeout =  500 * 1000;
+	server.headersTimeout = app.request.headersTimeout = 500 * 1000;
+});
