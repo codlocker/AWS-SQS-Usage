@@ -47,8 +47,8 @@ exports.uploadFileHandler = asyncHandler(async (req, res, next) => {
 		}
 
 
-		console.log(`File ${basename(actualFileName)} uploaded successfully!!\n`.green);
-		console.log(`${message}\n`.green);
+		console.log(`File ${basename(actualFileName)} uploaded successfully!!\n`.yellow);
+		console.log(`${message}\n`.yellow);
 		console.log("====Request End====\n");
 
 		res.status(200).send(message);
